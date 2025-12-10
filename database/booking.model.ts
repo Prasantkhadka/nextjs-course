@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Model, Types } from 'mongoose';
+import mongoose, { Schema, Document, Model, Types, CallbackError } from 'mongoose';
 import Event from './event.model';
 
 /**
@@ -45,21 +45,15 @@ const bookingSchema = new Schema<IBooking>(
  * Pre-save hook to verify the referenced event exists
  * Prevents orphaned bookings by validating eventId before saving
  */
-bookingSchema.pre('save', async function (next) {
+bookingSchema.pre('save', async function () {
   // Only validate eventId if it's new or modified
   if (this.isNew || this.isModified('eventId')) {
-    try {
-      const eventExists = await Event.findById(this.eventId);
-      
-      if (!eventExists) {
-        throw new Error(`Event with ID ${this.eventId} does not exist`);
-      }
-    } catch (error) {
-      return next(error as Error);
+    const eventExists = await Event.findById(this.eventId);
+    
+    if (!eventExists) {
+      throw new Error(`Event with ID ${this.eventId} does not exist`);
     }
   }
-  
-  next();
 });
 
 // Create index on eventId for faster queries and event-based lookups

@@ -177,7 +177,7 @@ const eventSchema = new Schema<IEvent>(
  * Pre-save hook for slug generation and date/time normalization
  * Only regenerates slug when title is modified
  */
-eventSchema.pre('save', function (next) {
+eventSchema.pre('save', function () {
   // Generate slug only if title is new or modified
   if (this.isModified('title')) {
     this.slug = generateSlug(this.title);
@@ -185,23 +185,13 @@ eventSchema.pre('save', function (next) {
   
   // Normalize date to ISO format if modified
   if (this.isModified('date')) {
-    try {
-      this.date = normalizeDate(this.date);
-    } catch (error) {
-      return next(error as Error);
-    }
+    this.date = normalizeDate(this.date);
   }
   
   // Normalize time to 24-hour format if modified
   if (this.isModified('time')) {
-    try {
-      this.time = normalizeTime(this.time);
-    } catch (error) {
-      return next(error as Error);
-    }
+    this.time = normalizeTime(this.time);
   }
-  
-  next();
 });
 
 // Create unique index on slug for faster lookups and uniqueness enforcement
