@@ -54,6 +54,6 @@ export const events: Event[] = [
     slug: "global-hackathon-2025",
     location: "Virtual / Worldwide",
     date: "April 5-7, 2025",
-    time: "24 Hours",
+    time: "9:00 AM - 6:00 PM CST",
   },
 ];
